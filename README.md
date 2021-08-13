@@ -13,6 +13,11 @@ You can focus on editing the actual feature files and let features2Others make t
 
 ---
 
+### Installation
+
+CLone the repo and then tun npm install to download libraries,
+
+
 ## Usage
 
 ### Demo usage
@@ -23,6 +28,7 @@ from the example feature sources in `examples/features`, using the templates and
 ```
 node features2Others.js create
 ```
+ 
 
 ### Real world usage
 
