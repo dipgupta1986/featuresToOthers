@@ -15,8 +15,11 @@ You can focus on editing the actual feature files and let features2Others make t
 
 ### Installation
 
-CLone the repo and then tun npm install to download libraries,
+CLone the repo and then run below commans to download libraries,
 
+```
+npm install
+```
 
 ## Usage
 
