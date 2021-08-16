@@ -21,7 +21,7 @@ var commander = require('commander'),
         path = require('path'),
         i18n = require('i18next');
 var html_to_pdf = require('htmltopdf-node');
-var  htmlDocx = require("html-docx-js");
+var htmlDocx = require("html-docx-js");
 
 
 // options
@@ -74,7 +74,7 @@ function create() {
     var featureHandlebarTemplate = handlebars.compile(fs.readFileSync(FEATURETEMPLATE, FILE_ENCODING));
     var cssStyles = fs.readFileSync(TEMPLATESDIR + '/style.css', FILE_ENCODING);
 
-    parseFeatures(function(features) {
+     parseFeatures(function(features) {
 
         var featuresHtml = '';
         if (features) {
@@ -91,7 +91,7 @@ function create() {
         var docHtml = docHandlebarTemplate(docData);
 
         if (OUTPUTFILE) {
-            writeOutput(docHtml, OUTPUTFILE);
+           writeOutput(docHtml, OUTPUTFILE);
         } else {
             // write to default output dir. Create first if necessary
             fs.mkdir('output', function(e) {
@@ -118,7 +118,7 @@ async function writeOutput(html, outputfile) {
     let file = { content: html, name: outputfile };
     let options = { format: 'A4' };
     console.log("generating pdf");
-    var pdfBuffer  = await html_to_pdf.generatePdf(file,options)
+    var pdfBuffer  = await html_to_pdf.generatePdf(file,options);
     fs.writeFileSync(pdfFIleName, pdfBuffer);
     console.log("Pdf generated  "+pdfFIleName);
     console.log("generating word");
@@ -129,7 +129,7 @@ async function writeOutput(html, outputfile) {
 
 }
 
-function parseFeatures(callback) {
+function parseFeatures(writeOutputCallback) { //this function is caled once
 
     var allFiles = fs.readdirSync(INPUTDIR);
     var featureFiles = underscore.filter(allFiles, function(item) {
@@ -139,14 +139,18 @@ function parseFeatures(callback) {
     var sortedFeaturesFullpath = underscore.map(sortedFeatureFiles, function(filename) {
         return INPUTDIR + '/' + filename;
     });
+    // console.log("file name read from folder")
+    // console.log(sortedFeaturesFullpath)
 
+    //below will be called for each file and then after readinfg each file :parseFeatureFile function will be called
     async.mapSeries(sortedFeaturesFullpath, parseFeatureFile, function(err, results) {
-        callback(results);
+        // console.log(JSON.stringify(results))
+        writeOutputCallback(results);
     });
 }
 
 function parseFeatureFile(featureFilename, callback) {
-
+    // console.log("reading file "+featureFilename)
     var feature = new Object();
     feature.background = '';
     feature.scenarios = [];
@@ -157,7 +161,7 @@ function parseFeatureFile(featureFilename, callback) {
     var featureLineWasFound = false;
     var scenariosStarted = false;
 
-    linereader.eachLine(featureFilename, function(line) {
+    linereader.eachLine(featureFilename, function(line,last) {
 
         if (lineIndicatesThatANewScenarioBegins(line) && foundMultirowScenario) {
             // new scenario found. start parsing new scenario
@@ -197,13 +201,12 @@ function parseFeatureFile(featureFilename, callback) {
         if (i18nStringContains(line, 'feature')) {
             feature.name = line.replace(i18n.t('feature'), '');
             featureLineWasFound = true;
-        }
-
-    }, function() {
+        }        
         // Add last scenario, if exists
         if (scenario && scenario.content) {
             feature.scenarios.push(scenario);
-        }
+        }            
+    },function() {
         callback(null, feature);
     });
 
