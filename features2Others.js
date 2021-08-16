@@ -208,10 +208,6 @@ function parseFeatureFile(featureFilename, callback) {
         }        
                
     },function() {
-          // Add last scenario, if exists
-        if (scenario && scenario.content) {
-            feature.scenarios.push(scenario);
-        }   
         callback(null, feature);
     });
 
