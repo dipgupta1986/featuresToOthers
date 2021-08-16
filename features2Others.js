@@ -10,8 +10,10 @@ var BREAKBEFOREWORD = null;
 var DOCTEMPLATE, FEATURETEMPLATE;
 
 // MODULES
-var commander = require('commander'),
-    fs = require('fs'),
+    const { Command } = require('commander');
+    let commander = new Command();
+    // console.log(commander)
+   var  fs = require('fs'),
     handlebars = require('handlebars'),
     linereader = require('line-reader'),
     underscore = require('underscore'),
@@ -48,16 +50,18 @@ if (process.argv.length < 3) {
 }
 
 // parse commands
+// console.log(process.argv)
 commander.parse(process.argv);
 
 function setup(done) {
-    INPUTDIR = commander.inputDir || INPUTDIR;
-    TEMPLATESDIR = commander.templatesDir || TEMPLATESDIR;
-    OUTPUTFILE = commander.outputFile || OUTPUTFILE;
-    LANGUAGE = commander.lang || LANGUAGE;
-    AUTHOR = commander.author || AUTHOR;
-    PRODUCTNAME = commander.productName || PRODUCTNAME;
-    BREAKBEFOREWORD = commander.breakBeforeWord || BREAKBEFOREWORD;
+    var commandOptions = commander._optionValues;
+    INPUTDIR = commandOptions.inputDir || INPUTDIR;
+    TEMPLATESDIR = commandOptions.templatesDir || TEMPLATESDIR;
+    OUTPUTFILE = commandOptions.outputFile || OUTPUTFILE;
+    LANGUAGE = commandOptions.lang || LANGUAGE;
+    AUTHOR = commandOptions.author || AUTHOR;
+    PRODUCTNAME = commandOptions.productName || PRODUCTNAME;
+    BREAKBEFOREWORD = commandOptions.breakBeforeWord || BREAKBEFOREWORD;
     DOCTEMPLATE = TEMPLATESDIR + '/doc_template.html';
     FEATURETEMPLATE = TEMPLATESDIR + '/feature_template.html';
     i18n.init({ lng: LANGUAGE, resGetPath: path.dirname(require.main.filename) + '/locales/__lng__/__ns__.json' }, function(t) {
