@@ -206,11 +206,12 @@ function parseFeatureFile(featureFilename, callback) {
             feature.name = line.replace(i18n.t('feature'), '');
             featureLineWasFound = true;
         }        
-        // Add last scenario, if exists
+               
+    },function() {
+          // Add last scenario, if exists
         if (scenario && scenario.content) {
             feature.scenarios.push(scenario);
-        }            
-    },function() {
+        }   
         callback(null, feature);
     });
 
